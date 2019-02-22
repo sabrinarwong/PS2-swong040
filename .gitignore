@@ -1,0 +1,9 @@
+Makefile
+README.MD
+main.cpp
+main.h
+porter2_stemmer/
+stoplist.txt
+
+ps1/
+index
