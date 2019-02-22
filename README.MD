@@ -1,4 +1,7 @@
-# ps2
+# TBA
+
+# PS2
+Extending PS1, stemming is included when creating the inverted index.
 
 ## Running PS2
 Run the following commands:
@@ -11,13 +14,14 @@ make; ./index;
 
 ## About
 Included in this repo is: 
-1. 
+1. `porter2_stemmer/` - stemming algorithm library
+<!-- 2. `main.cpp` prompting user input and `main.h` implementing the VSM  -->
 
 ## Assumptions
 
 
 ## Contributing
-`porter2_stemmer/` algorithm folder and MakeFile (modified) taken from [here](https://github.com/smassung/porter2_stemmer)
+`porter2_stemmer/` algorithm folder and `MakeFile` (modified) taken from [here](https://github.com/smassung/porter2_stemmer)
 
 Sabrina Wong
 swong040@ucr.edu
