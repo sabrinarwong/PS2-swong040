@@ -21,6 +21,9 @@ int main(){
 
 	while (input != "quit"){
 		// test user input here
+		Porter2Stemmer::trim(input);
+		Porter2Stemmer::stem(input);
+
 		index->test(input);
 
 		cout << endl;
