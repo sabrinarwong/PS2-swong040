@@ -15,7 +15,9 @@ make; ./index;
 ## About
 Included in this repo is: 
 1. `porter2_stemmer/` - stemming algorithm library
-<!-- 2. `main.cpp` prompting user input and `main.h` implementing the VSM  -->
+2. index.txt - list of index created and number of terms in each document
+<!-- `main.cpp` prompting user input and `main.h` implementing the VSM  -->
+
 
 ## Assumptions
 
