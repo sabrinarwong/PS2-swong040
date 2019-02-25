@@ -24,6 +24,7 @@
 #include <utility>
 #include <vector>
 
+
 using namespace std;
 
 typedef pair<string, int> posting; // (docID, freq of term in doc) ** per term per doc
@@ -88,7 +89,9 @@ class docIndex{
 		term t;
 		vector<string> stopList;
 		int docCount;
-
+		collection query;
+		double term_tf, idf, query_tf;
+		
 		// stop words from .txt to vector
 		void get_stop_words(){
 			// used to take out stop words in data files
@@ -107,13 +110,84 @@ class docIndex{
 			// for(int i = 0; i < stopList.size(); i++){ cout << stopList[i] << endl; }
 		}
 
+		void query_index(string fuck){
+			int size = query.docCollection.size();
+			
+			// get query no from query list
+			string queryNo = (fuck.substr(0,fuck.find_first_of(".")));
+			fuck = fuck.substr(3);
+
+			// move on to actual query
+			stringstream input(fuck);
+			string text; int count = 0;
+			string inTerms[50];
+
+			while(input >> text){
+				count++;
+
+				if(isdigit(text[0])){
+					int textInt = stoi(text);
+					text = to_string(textInt);
+					query.addTerm(text, queryNo);
+					cout << text << endl;
+					continue;
+				}
+					
+				transform(text.begin(), text.end(), text.begin(), ::tolower); 
+				
+				int stopFlag = false, termCount = 0;
+				size_t punct = text.find_first_of(",./<>?\\:;\'\"!@#$%^&*(){}[]-_=+");
+				while (punct != string::npos){
+					inTerms[termCount] = text.substr(0, punct);
+					text = text.substr(punct + 1, text.size());
+					punct = text.find_first_of(",./<>?\\:;\'\"!@#$%^&*(){}[]-_=+");
+					termCount++;
+				}
+				inTerms[termCount] = text;
+
+				if(termCount > 0){
+					for(int i = 0; i < termCount; i++){
+						for(int j = 0; j < stopList.size(); j++){
+							if(strcmp(inTerms[i].c_str(), (stopList[j]).c_str()) == 0){
+								stopFlag = true;
+								break;
+							}
+						}
+						if(stopFlag){ continue; }
+
+						Porter2Stemmer::trim(inTerms[i]);
+						Porter2Stemmer::stem(inTerms[i]);
+
+						// add to terms in collection
+						query.addTerm(inTerms[i], queryNo);
+					}
+					continue;
+				}
+				for(int i = 0; i < stopList.size(); i++){
+					if(strcmp(text.c_str(), (stopList[i]).c_str()) == 0){
+						stopFlag = true;
+						break;
+					}
+				}
+				if(stopFlag){ continue; }
+
+				Porter2Stemmer::trim(text);
+				Porter2Stemmer::stem(text);
+
+				query.addTerm(text, queryNo);
+			}
+
+			termsInDoc something = make_pair(queryNo, count);
+			query.docCollection.push_back(something);
+		}
+
 		void tfidf(int termInd, vector<termsInDoc> docs){
 			int k = 73; // total num of docs
 			int pSize = index.terms[termInd].postings.size(); // num of docs with term
 			
 			// IDF(t) = log_e(Total number of documents / Number of documents with term t in it).
 			// double idf = 1 + log(k / (double)pSize); // ??? from example
-			double idf = log(k / (double)pSize);
+			idf = log(k / (double)pSize);
 
 			cout << "   " << index.terms[termInd].t << ": (tf, idf, tf*idf)." << endl;
 
@@ -129,12 +203,12 @@ class docIndex{
 					}
 				}
 				// TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
-				double tf = freq / (double)n;
+				term_tf = freq / (double)n;
 
 				cout << "\t" << id << " : (" 
-					 << tf << ", " 
+					 << term_tf << ", " 
 					 << idf << ", " 
-					 << tf * idf << ")" << endl;
+					 << term_tf * idf << ")" << endl;
 			}
 		}
 
@@ -197,6 +271,14 @@ class docIndex{
 
 						while(check >> word){
 							index.docCollection[docCount - 1].second++;
+
+							if(isdigit(word[0])){
+								int textInt = stoi(word);
+								word = to_string(textInt);
+								index.addTerm(word, docNo_line);
+								cout << word << endl;
+								continue;
+							}
 					
 							transform(word.begin(), word.end(), word.begin(), ::tolower); 
 							
@@ -254,8 +336,14 @@ class docIndex{
 			createIndex("data/ap89_collection");
 		}
 
+		// FIX ME
 		void print(int ind){
 			tfidf(ind, index.docCollection);
+
+		}
+
+		void query_input(string input){
+			query_index(input);
 		}
 
 		bool check_if_stopword(string input){
@@ -265,7 +353,6 @@ class docIndex{
 				}
 			}
 			return false;
-
 		}
 
 		void test(string input){
@@ -311,6 +398,31 @@ class docIndex{
 			output.close();
 		}
 
+		//testing purposes
+		void print_query(){
+			// output to docIndex for 2nd index creation
+			ofstream output; output.open("query.txt");
+			output << "Document Index contains:\n";
+
+			for(int i = 0; i < query.docCollection.size(); i++){
+				termsInDoc k = query.docCollection[i];
+				output << "Doc " << k.first << ": " << k.second << " terms\n";
+			}
+
+			output << "\nPosting List contains:\n";
+			for(int i = 0; i < query.terms.size(); i++){
+				term k = query.terms[i];
+				output << k.t << "(" << k.ids.size() << ")" << endl << "\t";
+				for(int j = 0; j < k.postings.size(); j++){
+					output << "(" << k.postings[j].first << ": " << k.postings[j].second << ") ";
+				}
+				output << endl;
+			}
+
+			cout << "   Query Index file created." << endl;
+
+			output.close();
+		}
 };
 
 #endif

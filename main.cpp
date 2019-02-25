@@ -18,8 +18,8 @@ int main(){
 	// cout << "Creating index." << endl;
 	docIndex *index = new docIndex();
 
-	// index->print_index(); // testing purposes
-	cout << "Index created." << endl << endl;
+	index->print_index(); // testing purposes
+	cout << "   Index created." << endl << endl;
 
 	ifstream inputQuery;
 	string query, queryTerm;
@@ -30,26 +30,15 @@ int main(){
 		return -1;
 	}
 
-	// for(query; getline(inputQuery,query); ){
-		getline(inputQuery,query);	// gets the first line of queries
+	for(query; getline(inputQuery,query); ){
+		// getline(inputQuery,query);	// gets the first line of queries
 
-		int queryNo = stoi(query.substr(0,2));
-		query = query.substr(3);
-		cout << endl << query << endl; 
-		stringstream query_stream(query);
-		while(query_stream >> queryTerm){
-			// cout << " original term: " << queryTerm << ".  ";
-			transform(queryTerm.begin(), queryTerm.end(), queryTerm.begin(), ::tolower);
+		index->query_input(query);
 
-			if(index->check_if_stopword(queryTerm)){ cout << queryTerm << " is a stopword." << endl; continue;}
+	}
+	
+	index->print_query(); // testing purposes
 
-			Porter2Stemmer::trim(queryTerm);
-			Porter2Stemmer::stem(queryTerm);
-
-			index->test(queryTerm);
-
-		}
-	// }
 
 
 	return 0;
