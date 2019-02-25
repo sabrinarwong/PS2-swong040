@@ -274,12 +274,15 @@ void Porter2Stemmer::internal::step1C(std::string& word)
   lessli:               replace by less
   ogi:                  replace by og if preceded by l
   li:                   delete if preceded by a valid li-ending
+  mental:               replace by ment
+
 */
 void Porter2Stemmer::internal::step2(std::string& word, size_t startR1)
 {
     static const std::pair<meta::util::string_view, meta::util::string_view>
         subs[] = {{"ational", "ate"},
                   {"tional", "tion"},
+                  {"mental", "ment"},
                   {"enci", "ence"},
                   {"anci", "ance"},
                   {"abli", "able"},
@@ -333,6 +336,8 @@ void Porter2Stemmer::internal::step2(std::string& word, size_t startR1)
   icate, iciti, ical: replace by ic
   ful, ness:          delete
   ative:              delete if in R2
+
+  mental              replace by ment
 */
 void Porter2Stemmer::internal::step3(std::string& word, size_t startR1,
                                      size_t startR2)
@@ -340,6 +345,7 @@ void Porter2Stemmer::internal::step3(std::string& word, size_t startR1,
     static const std::pair<meta::util::string_view, meta::util::string_view>
         subs[] = {{"ational", "ate"},
                   {"tional", "tion"},
+                  {"mental", "ment"},
                   {"alize", "al"},
                   {"icate", "ic"},
                   {"iciti", "ic"},
