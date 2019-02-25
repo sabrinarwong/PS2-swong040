@@ -1,36 +1,56 @@
 #include "main.h"
 
-using namespace std;
+#include <string>
+#include <fstream>
+#include <cstdlib>
 
-#include <ctype.h>
+#include <cstring>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <utility>
+#include <vector>
 
-// // change to take input from query_list.txt 
-// int main(){
+// change to take input from query_list.txt 
+int main(){
 
-// 	// create index here
-// 	// cout << "Creating index." << endl;
-// 	docIndex *index = new docIndex();
+	// create index here
+	// cout << "Creating index." << endl;
+	docIndex *index = new docIndex();
 
-// 	// index->print_index(); // testing purposes
-// 	cout << "Index created." << endl << endl;
+	// index->print_index(); // testing purposes
+	cout << "Index created." << endl << endl;
+
+	ifstream inputQuery;
+	string query, queryTerm;
+
+	inputQuery.open("data/query_list.txt");
+	if(!inputQuery.is_open()){
+		cout << "Error opening query file." << endl;
+		return -1;
+	}
+
+	// for(query; getline(inputQuery,query); ){
+		getline(inputQuery,query);	// gets the first line of queries
+
+		int queryNo = stoi(query.substr(0,2));
+		query = query.substr(3);
+		cout << endl << query << endl; 
+		stringstream query_stream(query);
+		while(query_stream >> queryTerm){
+			// cout << " original term: " << queryTerm << ".  ";
+			transform(queryTerm.begin(), queryTerm.end(), queryTerm.begin(), ::tolower);
+
+			if(index->check_if_stopword(queryTerm)){ cout << queryTerm << " is a stopword." << endl; continue;}
+
+			Porter2Stemmer::trim(queryTerm);
+			Porter2Stemmer::stem(queryTerm);
+
+			index->test(queryTerm);
+
+		}
+	// }
 
 
-// 	cout << "Enter a term to query: " << endl;
-
-// 	string input = "";
-// 	cin >> input; transform(input.begin(), input.end(), input.begin(), ::tolower);
-
-// 	while (input != "quit"){
-// 		// test user input here
-// 		Porter2Stemmer::trim(input);
-// 		Porter2Stemmer::stem(input);
-
-// 		index->test(input);
-
-// 		cout << endl;
-// 		cout << "Enter a term to query: " << endl;
-// 		cin >> input; transform(input.begin(), input.end(), input.begin(), ::tolower);
-// 	}
-
-// 	return 0;
-// }
+	return 0;
+}
