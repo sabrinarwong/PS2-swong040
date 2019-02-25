@@ -1,6 +1,6 @@
 EXE = index
-OBJS = porter2_stemmer/porter2_stemmer.o
-CC = clang++ -std=c++11 -w -Wall -pedantic -I.
+OBJS = porter2_stemmer.o
+CC = clang++ -std=c++11 -Wall -pedantic -I.
 CCOPTS = -O3
 LINKER = clang++ -std=c++11 -w -Wall -pedantic -I.
 
@@ -13,4 +13,4 @@ porter2_stemmer.o: porter2_stemmer/porter2_stemmer.h porter2_stemmer/porter2_ste
 	$(CC) $(CCOPTS) -c porter2_stemmer/porter2_stemmer.cpp -o $@
 
 clean:
-	rm -f *.o $(EXE)
+	rm -f *.o $(EXE) index.txt
