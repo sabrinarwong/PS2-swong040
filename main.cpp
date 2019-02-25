@@ -4,6 +4,7 @@ using namespace std;
 
 #include <ctype.h>
 
+// // change to take input from query_list.txt 
 // int main(){
 
 // 	// create index here
@@ -21,6 +22,9 @@ using namespace std;
 
 // 	while (input != "quit"){
 // 		// test user input here
+// 		Porter2Stemmer::trim(input);
+// 		Porter2Stemmer::stem(input);
+
 // 		index->test(input);
 
 // 		cout << endl;
