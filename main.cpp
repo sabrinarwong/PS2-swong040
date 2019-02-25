@@ -1,16 +1,5 @@
 #include "main.h"
 
-#include <string>
-#include <fstream>
-#include <cstdlib>
-
-#include <cstring>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <utility>
-#include <vector>
-
 // change to take input from query_list.txt 
 int main(){
 
@@ -32,14 +21,9 @@ int main(){
 
 	for(query; getline(inputQuery,query); ){
 		// getline(inputQuery,query);	// gets the first line of queries
-
 		index->query_input(query);
-
 	}
-	
 	index->print_query(); // testing purposes
-
-
 
 	return 0;
 }

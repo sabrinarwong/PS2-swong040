@@ -29,6 +29,7 @@ using namespace std;
 
 typedef pair<string, int> posting; // (docID, freq of term in doc) ** per term per doc
 typedef pair<string, int> termsInDoc; // (docID, total num terms in doc) ** all terms per document 
+typedef pair<double, double> tfidf; // (query, document)
 
 struct term{
 	string t = ""; // term in index
@@ -62,8 +63,8 @@ struct collection{
 
 	//add term into the collection
 	void addTerm(string word, string docID){
-		int i, ind = -1;
-		for(i = 0; i < terms.size(); i++){
+		int ind = -1;
+		for(int i = 0; i < terms.size(); i++){
 			// if word is in collection, increment posting 
 			if(strcmp(word.c_str(), terms[i].t.c_str()) == 0){
 				ind = i;
@@ -71,7 +72,6 @@ struct collection{
 				return;
 			}
 		}
-		/* NTS: this ^^ function is a tad different */
 
 		// if word isnt in collection, make new posting and add to collection
 		if(ind == -1){
@@ -91,7 +91,7 @@ class docIndex{
 		int docCount;
 		collection query;
 		double term_tf, idf, query_tf;
-		
+
 		// stop words from .txt to vector
 		void get_stop_words(){
 			// used to take out stop words in data files
@@ -105,22 +105,16 @@ class docIndex{
 				}
 			}
 			stopWords.close();
-			cout << "   Stop Words vector created." << endl;
-
-			// for(int i = 0; i < stopList.size(); i++){ cout << stopList[i] << endl; }
+			// cout << "   Stop Words vector created." << endl;
 		}
 
-		void query_index(string fuck){
+		void query_index(string fuck, string queryNo){
 			int size = query.docCollection.size();
-			
-			// get query no from query list
-			string queryNo = (fuck.substr(0,fuck.find_first_of(".")));
-			fuck = fuck.substr(3);
 
 			// move on to actual query
 			stringstream input(fuck);
 			string text; int count = 0;
-			string inTerms[50];
+			string inTerms[30];
 
 			while(input >> text){
 				count++;
@@ -129,13 +123,12 @@ class docIndex{
 					int textInt = stoi(text);
 					text = to_string(textInt);
 					query.addTerm(text, queryNo);
-					cout << text << endl;
 					continue;
 				}
 					
 				transform(text.begin(), text.end(), text.begin(), ::tolower); 
 				
-				int stopFlag = false, termCount = 0;
+				int termCount = 0;
 				size_t punct = text.find_first_of(",./<>?\\:;\'\"!@#$%^&*(){}[]-_=+");
 				while (punct != string::npos){
 					inTerms[termCount] = text.substr(0, punct);
@@ -147,13 +140,7 @@ class docIndex{
 
 				if(termCount > 0){
 					for(int i = 0; i < termCount; i++){
-						for(int j = 0; j < stopList.size(); j++){
-							if(strcmp(inTerms[i].c_str(), (stopList[j]).c_str()) == 0){
-								stopFlag = true;
-								break;
-							}
-						}
-						if(stopFlag){ continue; }
+						if(check_if_stopword(inTerms[i])){ continue; }
 
 						Porter2Stemmer::trim(inTerms[i]);
 						Porter2Stemmer::stem(inTerms[i]);
@@ -163,13 +150,8 @@ class docIndex{
 					}
 					continue;
 				}
-				for(int i = 0; i < stopList.size(); i++){
-					if(strcmp(text.c_str(), (stopList[i]).c_str()) == 0){
-						stopFlag = true;
-						break;
-					}
-				}
-				if(stopFlag){ continue; }
+				
+				if(check_if_stopword(text)){ continue; }
 
 				Porter2Stemmer::trim(text);
 				Porter2Stemmer::stem(text);
@@ -179,37 +161,6 @@ class docIndex{
 
 			termsInDoc something = make_pair(queryNo, count);
 			query.docCollection.push_back(something);
-		}
-
-		void tfidf(int termInd, vector<termsInDoc> docs){
-			int k = 73; // total num of docs
-			int pSize = index.terms[termInd].postings.size(); // num of docs with term
-			
-			// IDF(t) = log_e(Total number of documents / Number of documents with term t in it).
-			// double idf = 1 + log(k / (double)pSize); // ??? from example
-			idf = log(k / (double)pSize);
-
-			cout << "   " << index.terms[termInd].t << ": (tf, idf, tf*idf)." << endl;
-
-			for(int i = 0; i < pSize; i++){
-				int n;
-				string id = "";
-				int freq = index.terms[termInd].postings[i].second; // freq of term in doc
-				for(int j = 0; j < docs.size(); j++){
-					if(index.terms[termInd].postings[i].first == docs[j].first){
-						id = docs[j].first;
-						n = docs[j].second;	// total num terms in doc
-						break;
-					}
-				}
-				// TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
-				term_tf = freq / (double)n;
-
-				cout << "\t" << id << " : (" 
-					 << term_tf << ", " 
-					 << idf << ", " 
-					 << term_tf * idf << ")" << endl;
-			}
 		}
 
 		void initVars(){
@@ -276,13 +227,12 @@ class docIndex{
 								int textInt = stoi(word);
 								word = to_string(textInt);
 								index.addTerm(word, docNo_line);
-								cout << word << endl;
 								continue;
 							}
 					
 							transform(word.begin(), word.end(), word.begin(), ::tolower); 
 							
-							int stopFlag = false, termCount = 0;
+							int termCount = 0;
 							size_t punct = word.find_first_of(",./<>?\\:;\'\"!@#$%^&*(){}[]-_=+");
 							while (punct != string::npos){
 								inTerms[termCount] = word.substr(0, punct);
@@ -294,13 +244,7 @@ class docIndex{
 
 							if(termCount > 0){
 								for(int i = 0; i < termCount; i++){
-									for(int j = 0; j < stopList.size(); j++){
-										if(strcmp(inTerms[i].c_str(), (stopList[j]).c_str()) == 0){
-											stopFlag = true;
-											break;
-										}
-									}
-									if(stopFlag){ continue; }
+									if(check_if_stopword(inTerms[i])){ continue; }
 
 									Porter2Stemmer::trim(inTerms[i]);
 									Porter2Stemmer::stem(inTerms[i]);
@@ -309,13 +253,8 @@ class docIndex{
 								}
 								continue;
 							}
-							for(int i = 0; i < stopList.size(); i++){
-								if(strcmp(word.c_str(), (stopList[i]).c_str()) == 0){
-									stopFlag = true;
-									break;
-								}
-							}
-							if(stopFlag){ continue; }
+							
+							if(check_if_stopword(word)){ continue; }
 
 							Porter2Stemmer::trim(word);
 							Porter2Stemmer::stem(word);
@@ -338,12 +277,127 @@ class docIndex{
 
 		// FIX ME
 		void print(int ind){
-			tfidf(ind, index.docCollection);
+			// term_tfidf(ind);
 
 		}
 
+		// fix here
+		void get_tfidf(string text){
+			// calculate tf-idf for query and index 
+			int termInd = pos(text, index);
+			int queryInd = pos(text, query);
+			
+			vector<termsInDoc> indexDocs = index.docCollection;
+			int k = 73; // total num of docs
+			int iSize = index.terms[termInd].postings.size(); // num of docs with term
+			
+			// IDF(t) = log_e(Total number of documents / Number of documents with term t in it).
+			// double idf = 1 + log(k / (double)pSize); // ??? from example
+			idf = log(k / (double)iSize);
+
+			for(int i = 0; i < iSize; i++){
+				int n;
+				string id = "";
+				int freq = index.terms[termInd].postings[i].second; // freq of term in doc
+				for(int j = 0; j < indexDocs.size(); j++){
+					if(index.terms[termInd].postings[i].first == indexDocs[j].first){
+						id = indexDocs[j].first;
+						n = indexDocs[j].second;	// total num terms in doc
+						break;
+					}
+				}
+				// TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
+				term_tf = freq / (double)n;
+
+				cout << "\t" << id << " : (" 
+					 << term_tf << ", " 
+					 << idf << ", " 
+					 << term_tf * idf << ")" << endl;
+			}
+
+			vector<termsInDoc> queryDocs = query.docCollection;
+			int qSize = query.terms[queryInd].postings.size(); // num of docs with term
+			
+			// cout << "   " << query.terms[queryInd].t << ": (tf, idf, tf*idf)." << endl;
+
+			for(int i = 0; i < qSize; i++){
+				int n;
+				string id = "";
+				int freq = query.terms[queryInd].postings[i].second; // freq of term in doc
+				for(int j = 0; j < queryDocs.size(); j++){
+					if(query.terms[queryInd].postings[i].first == queryDocs[j].first){
+						id = queryDocs[j].first;
+						n = queryDocs[j].second;	// total num terms in doc
+						break;
+					}
+				}
+				// TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
+				query_tf = freq / (double)n;
+
+
+				cout << "\t" << id << " : (" 
+					 << query_tf << ", " 
+					 << idf << ", " 
+					 << query_tf * idf << ")" << endl;
+			}			
+		}
+
 		void query_input(string input){
-			query_index(input);
+			// get query no from query list
+			string queryNo = (input.substr(0,input.find_first_of(".")));
+			input = input.substr(3);
+
+			// separate query by term
+			query_index(input, queryNo);
+
+			// move on to actual query
+			stringstream look(input);
+			string text;
+
+			// calculate cosine similarity
+			while(look >> text){
+				// digit query
+				if(isdigit(text[0])){
+					int textInt = stoi(text);
+					text = to_string(textInt);
+					get_tfidf(text);
+					continue;
+				}
+
+				transform(text.begin(), text.end(), text.begin(), ::tolower); 
+				size_t punct = text.find_first_of(",./<>?\\:;\'\"!@#$%^&*(){}[]-_=+");
+				int termCount = 0;
+				string inTerms[30];
+				while (punct != string::npos){
+					inTerms[termCount] = text.substr(0, punct);
+					text = text.substr(punct + 1, text.size());
+					punct = text.find_first_of(",./<>?\\:;\'\"!@#$%^&*(){}[]-_=+");
+					termCount++;
+				}
+				inTerms[termCount] = text;
+				if(termCount > 0){
+					for(int i = 0; i < termCount; i++){
+						if(check_if_stopword(inTerms[i])){ continue; }
+
+						Porter2Stemmer::trim(inTerms[i]);
+						Porter2Stemmer::stem(inTerms[i]);
+
+						get_tfidf(inTerms[i]);
+					}
+					continue;
+				}
+
+				Porter2Stemmer::trim(text);
+				Porter2Stemmer::stem(text);
+
+				if(check_if_stopword(text)){
+					// cout << text << " is a stopword. " << endl;
+					continue;
+				}
+				get_tfidf(text);
+				// cosine_similarity()
+			}
+
 		}
 
 		bool check_if_stopword(string input){
@@ -355,11 +409,10 @@ class docIndex{
 			return false;
 		}
 
-		void test(string input){
-			int i;
+		int pos(string input, collection collection){
 			int ind = -1;
-			for(i = 0; i < index.terms.size(); i++){
-				if(strcmp(input.c_str(), index.terms[i].t.c_str()) == 0){
+			for(int i = 0; i < collection.terms.size(); i++){
+				if(strcmp(input.c_str(), collection.terms[i].t.c_str()) == 0){
 					ind = i;
 					break;
 				}
@@ -367,9 +420,8 @@ class docIndex{
 
 			if(ind == -1){	// if term is in index
 				cout << input << " not found in index." << endl;
-				return;
 			}
-			print(ind);
+			return ind;
 		}
 
 		//testing purposes
@@ -402,7 +454,7 @@ class docIndex{
 		void print_query(){
 			// output to docIndex for 2nd index creation
 			ofstream output; output.open("query.txt");
-			output << "Document Index contains:\n";
+			output << "Query Index contains:\n";
 
 			for(int i = 0; i < query.docCollection.size(); i++){
 				termsInDoc k = query.docCollection[i];
