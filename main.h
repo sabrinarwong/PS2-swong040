@@ -29,7 +29,7 @@ using namespace std;
 
 typedef pair<string, int> posting; // (docID, freq of term in doc) ** per term per doc
 typedef pair<string, int> termsInDoc; // (docID, total num terms in doc) ** all terms per document 
-typedef pair<double, double> tfidf; // (query, document)
+typedef pair<string, double> tf; // (doc/queryNo, tf);
 
 struct term{
 	string t = ""; // term in index
@@ -81,16 +81,22 @@ struct collection{
 			return;
 		}
 	}
+
+	// clear similar to clear() for vector, clears collection
+	void clear(){
+		docCollection.clear();
+		terms.clear();
+	}
 };
 
 class docIndex{
 	private:
-		collection index;
+		collection index, query;
 		term t;
 		vector<string> stopList;
 		int docCount;
-		collection query;
-		double term_tf, idf, query_tf;
+		double term_tf, idf = 0, query_tf;
+		vector<tf> querTF, termTF;
 
 		// stop words from .txt to vector
 		void get_stop_words(){
@@ -109,7 +115,7 @@ class docIndex{
 		}
 
 		void query_index(string fuck, string queryNo){
-			int size = query.docCollection.size();
+			// int size = query.docCollection.size();
 
 			// move on to actual query
 			stringstream input(fuck);
@@ -270,56 +276,29 @@ class docIndex{
 		    }
 		}
 
-	public:
-		docIndex(){
-			createIndex("data/ap89_collection");
-		}
-
-		// FIX ME
-		void print(int ind){
-			// term_tfidf(ind);
-
-		}
-
-		// fix here
+		// fix here // almost
 		void get_tfidf(string text){
+			cout << "    " << text << endl;
 			// calculate tf-idf for query and index 
 			int termInd = pos(text, index);
 			int queryInd = pos(text, query);
 			
+			vector<termsInDoc> queryDocs = query.docCollection;
+			int qSize = query.terms[queryInd].postings.size(); // num of docs with term
+
 			vector<termsInDoc> indexDocs = index.docCollection;
 			int k = 73; // total num of docs
 			int iSize = index.terms[termInd].postings.size(); // num of docs with term
 			
 			// IDF(t) = log_e(Total number of documents / Number of documents with term t in it).
-			// double idf = 1 + log(k / (double)pSize); // ??? from example
+			// idf = 1 + log(k / (double)pSize); // ??? from example
 			idf = log(k / (double)iSize);
-
-			for(int i = 0; i < iSize; i++){
-				int n;
-				string id = "";
-				int freq = index.terms[termInd].postings[i].second; // freq of term in doc
-				for(int j = 0; j < indexDocs.size(); j++){
-					if(index.terms[termInd].postings[i].first == indexDocs[j].first){
-						id = indexDocs[j].first;
-						n = indexDocs[j].second;	// total num terms in doc
-						break;
-					}
-				}
-				// TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
-				term_tf = freq / (double)n;
-
-				cout << "\t" << id << " : (" 
-					 << term_tf << ", " 
-					 << idf << ", " 
-					 << term_tf * idf << ")" << endl;
-			}
-
-			vector<termsInDoc> queryDocs = query.docCollection;
-			int qSize = query.terms[queryInd].postings.size(); // num of docs with term
-			
+			if(isinf(idf)){
+				idf = 0;
+			}			
 			// cout << "   " << query.terms[queryInd].t << ": (tf, idf, tf*idf)." << endl;
 
+			// print all queries with posting
 			for(int i = 0; i < qSize; i++){
 				int n;
 				string id = "";
@@ -335,17 +314,63 @@ class docIndex{
 				query_tf = freq / (double)n;
 
 
-				cout << "\t" << id << " : (" 
-					 << query_tf << ", " 
-					 << idf << ", " 
-					 << query_tf * idf << ")" << endl;
-			}			
+
+
+				cout << "      " << id 
+					 // << " : (" 
+					 // << query_tf << ", " 
+					 // << idf << ", " 
+					 // << query_tf * idf << ")"
+					 << endl;
+
+				// for every term in query, print tfidf posting in doc
+
+				// print all docs with term
+				for(int i = 0; i < iSize; i++){
+					int n;
+					string id = "";
+					int freq = index.terms[termInd].postings[i].second; // freq of term in doc
+					for(int j = 0; j < indexDocs.size(); j++){
+						if(index.terms[termInd].postings[i].first == indexDocs[j].first){
+							id = indexDocs[j].first;
+							n = indexDocs[j].second;	// total num terms in doc
+							break;
+						}
+					}
+					// TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
+					term_tf = freq / (double)n;
+
+					cout << "\t" << id << " : (" 
+						 << term_tf << ", " 
+						 << idf << ", " 
+						 << term_tf * idf << ")" << endl;
+
+					// cosine_similarity();
+				}
+			}
 		}
+
+		void cosine_similarity(){
+
+		}
+
+	public:
+		docIndex(){
+			createIndex("data/ap89_collection");
+		}
+
+		// FIX ME
+		// void print(int ind){
+		// 	cosine_similarity(ind);
+		
+		// }
 
 		void query_input(string input){
 			// get query no from query list
 			string queryNo = (input.substr(0,input.find_first_of(".")));
 			input = input.substr(3);
+
+			query.clear();
 
 			// separate query by term
 			query_index(input, queryNo);
@@ -395,7 +420,6 @@ class docIndex{
 					continue;
 				}
 				get_tfidf(text);
-				// cosine_similarity()
 			}
 
 		}

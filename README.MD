@@ -20,6 +20,10 @@ Included in this repo is:
 
 
 ## Assumptions
+- terms like "U.S." are broken into two terms: u, s.
+
+## ISSUES AS OF RIGHT NOW: 
+- 1988 cannot print out relevant docs
 
 
 ## Contributing
