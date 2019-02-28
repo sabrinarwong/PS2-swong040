@@ -11,7 +11,7 @@ int main(){
 	cout << "   Index created." << endl << endl;
 
 	ifstream inputQuery;
-	string query, queryTerm;
+	string query;
 
 	inputQuery.open("data/query_list.txt");
 	if(!inputQuery.is_open()){
@@ -19,9 +19,9 @@ int main(){
 		return -1;
 	}
 
-	for(query; getline(inputQuery,query); ){
+	for(query; getline(inputQuery, query); ){
 		// getline(inputQuery,query);	// gets the first line of queries
-		index->query_input(query);
+		index->queryIndex(query);
 	}
 	index->print_query(); // testing purposes
 
