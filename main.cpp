@@ -7,7 +7,7 @@ int main(){
 	// cout << "Creating index." << endl;
 	docIndex *index = new docIndex();
 
-	index->print_index(); // testing purposes
+	// index->print_index(); // testing purposes
 	cout << "   Index created." << endl << endl;
 
 	ifstream inputQuery;
@@ -23,7 +23,7 @@ int main(){
 		// getline(inputQuery,query);	// gets the first line of queries
 		index->queryIndex(query);
 	}
-	index->print_query(); // testing purposes
+	// index->print_query(); // testing purposes
 
 	return 0;
 }
