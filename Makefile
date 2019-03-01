@@ -13,4 +13,4 @@ porter2_stemmer.o: porter2_stemmer/porter2_stemmer.h porter2_stemmer/porter2_ste
 	$(CC) $(CCOPTS) -c porter2_stemmer/porter2_stemmer.cpp -o $@
 
 clean:
-	rm -f *.o $(EXE) # index.txt query.txt
+	rm -f *.o $(EXE) results_file.txt t_tfidf.txt q_tfidf.txt # index.txt query.txt
