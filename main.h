@@ -18,6 +18,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <map>
 #include <set>
 #include <sstream>
@@ -154,17 +155,29 @@ struct collection{
 
 class docIndex{
 private:
-	collection index, query;
+	collection index, query, perDoc;
 	int docCount;
 	vector<string> stopList;
-	vector<tfidf> t_tfidf, q_tfidf;
+	vector<tfidf> t_tfidf, q_tfidf, doc_sum_tfidf;
 	vector<cosSim> cosine_similarity;
 
-	// index of tfidf value in vector
-	int tfidf_pos(string text, vector<tfidf> v_tfidf){
+	// index of tfidf of text in vector
+	int tfidf_termPos(string text, vector<tfidf> v_tfidf){
 		int ind = -1;
 		for(int i = 0; i < v_tfidf.size(); i++){
 			if(strcmp(text.c_str(), v_tfidf[i].text.c_str()) == 0){
+				ind = i;
+				break;
+			}
+		}
+		return ind;
+	}
+
+	// index of tfidf of doc in vector
+	int tfidf_docPos(string docNo, vector<tfidf> v_tfidf){
+		int ind = -1;
+		for(int i = 0; i < v_tfidf.size(); i++){
+			if(strcmp(docNo.c_str(), v_tfidf[i].docId.c_str()) == 0){
 				ind = i;
 				break;
 			}
@@ -230,6 +243,7 @@ private:
 				int textInt = stoi(text);
 				text = to_string(textInt);
 				coll.addTerm(text, queryNo);
+				if(checkOn == true) {perDoc.addTerm(text, queryNo);}
 				continue;
 			}
 				
@@ -249,6 +263,7 @@ private:
 				for(int i = 0; i < termCount; i++){
 					Porter2Stemmer::trim(inTerms[i]);
 					Porter2Stemmer::stem(inTerms[i]);
+					if(checkOn == true) {perDoc.addTerm(inTerms[i], queryNo);}
 					if(checkOn && check_if_stopword(inTerms[i])){ continue; }
 
 					// add to terms in collection
@@ -259,6 +274,8 @@ private:
 			
 			Porter2Stemmer::trim(text);
 			Porter2Stemmer::stem(text);
+			// if check is true, perDoc is created for index
+			if(checkOn == true) {perDoc.addTerm(text, queryNo);}
 			if(checkOn && check_if_stopword(text)){ continue; }
 
 			coll.addTerm(text, queryNo);
@@ -292,6 +309,7 @@ private:
 				4. other file contents can be ignored
 	    	*/
 	    	if(strcmp(line.c_str(), "<DOC>") == 0){
+	    		perDoc.clear();
 	    		docCount++;
 	    		continue;
 	    	}
@@ -315,8 +333,12 @@ private:
 		    		getline(input,line);
 	    		}
 	    		continue;
+	    	} else if(strcmp(line.c_str(), "</DOC>") == 0){
+	    		get_sum_tfidf(docNo_line);
+	    		continue;
 	    	}
 	    }
+
 	}
 	
 	void createQueryIndex(string word, string queryNo){
@@ -357,11 +379,17 @@ private:
 
 	// IDF(t) = log_e(Total number of documents / Number of documents with term t in it).
 	double get_idf(string text){
-		int termPos = index.term_pos(text),
-			size = index.terms[termPos].postings.size(); // num of docs with term
+		int termPos = index.term_pos(text);
+		double idf = 0;
+		if(termPos == -1){
+			return idf;
+		}
+
+		int size = index.terms[termPos].postings.size(); // num of docs with term
+
 
 		// idf = 1 + log(k / (double)pSize); // ??? from example
-		double idf = 1 + log(73 / (double)size);
+		idf = 1 + log(73 / (double)size);
 		if(isinf(idf) || isnan(idf)){
 			idf = 0;
 		}
@@ -372,31 +400,37 @@ private:
 		double tf = get_tf(text, docId, coll);
 		double idf = get_idf(text);
 
-		// cout << text << " " << tf << " " << idf << endl;;
 		return tf * idf;
 	}
 	
 	// gets cosine similarity of between query and docId
 	double get_cosine_similarity(string docId){
-		double q_length = 0, t_length = 0, dot_sum = 0;
+		double q_length = 0, d_length = 0, dot_sum = 0;
 		for(int i = 0; i < q_tfidf.size(); i++){
 			q_length += pow(q_tfidf[i].tf_idf, 2);
 		}
 		q_length = sqrt(q_length);
 
+
+		for(int i = 0; i < doc_sum_tfidf.size(); i++){
+			if(strcmp(doc_sum_tfidf[i].docId.c_str(), docId.c_str()) == 0){
+				d_length = doc_sum_tfidf[i].tf_idf;
+				break;
+			}
+		}
+		d_length = sqrt(d_length);
+
 		for(int i = 0; i < t_tfidf.size(); i++){
 			if(strcmp(t_tfidf[i].docId.c_str(), docId.c_str()) == 0){
-				t_length += pow(t_tfidf[i].tf_idf, 2);
-
-				int qPos = tfidf_pos(t_tfidf[i].text, q_tfidf);
+				int qPos = tfidf_termPos(t_tfidf[i].text, q_tfidf);
 				if(qPos != -1){
 					dot_sum += t_tfidf[i].tf_idf * q_tfidf[qPos].tf_idf;
 				}
 			}
 		}
-		t_length = sqrt(t_length);
 
-		return dot_sum / (q_length * t_length);
+		double cs = dot_sum / (q_length * d_length);
+		return cs;
 	}
 
 	// fill vector with tfidf of query terms
@@ -436,6 +470,36 @@ private:
 		}
 	}
 
+	// each doc length (tfidf ^2) in index
+	void get_sum_tfidf(string docId){
+		// iterate through terms posting
+		// see if doc exists in vector
+		// if not, create
+		// else, add
+
+
+		int totalPos = index.doc_pos(docId);
+		int total = index.docCollection[totalPos].second;
+
+		for(int i = 0; i < perDoc.terms.size(); i++){
+			int docPos = tfidf_docPos(docId, doc_sum_tfidf);
+			int freq = perDoc.terms[i].postings[0].second;
+			double tf = freq / (double)total, 
+				   idf = get_idf(perDoc.terms[i].t), 
+				   tf_idf = tf * idf;
+
+			if(docPos == -1){
+				tfidf value;
+				value.docId = docId;
+				value.tf_idf = pow(tf_idf, 2);
+
+				doc_sum_tfidf.push_back(value);
+			} else{
+				doc_sum_tfidf[docPos].tf_idf += pow(tf_idf, 2);
+			}
+		}
+	}
+
 	// fill cos_sim vector and order them
 	void create_cos_sim(){
 		cosine_similarity.clear(); 	// reset for each query
@@ -449,7 +513,8 @@ private:
 			cosSim addToCosSim;
 			addToCosSim.docId = docNo;
 			addToCosSim.cs_val = get_cosine_similarity(docNo);
-			if(!isnan(addToCosSim.cs_val)){
+
+			if(!isnan(addToCosSim.cs_val) && addToCosSim.cs_val != 0){
 				cosine_similarity.push_back(addToCosSim);
 			}
 			docCount++;
@@ -477,10 +542,10 @@ private:
 		output.close();
 	}
 
-
 public:
 	docIndex(){
 		createIndex("data/ap89_collection");
+
 	}	
 	
 	// string input is each line of query
@@ -492,9 +557,9 @@ public:
 		// create query index
 		createQueryIndex(input, queryNo);
 		get_query_tfidf();
-		// print_tfidf('q', q_tfidf);
+		// print_tfidf("q", q_tfidf);
 		get_term_tfidf();
-		// print_tfidf('t', t_tfidf);
+		// print_tfidf("t", t_tfidf);
 		create_cos_sim();
 		generate_results_file(queryNo);
 	}
@@ -532,7 +597,7 @@ public:
 	//testing purposes
 	void print_query(){
 		// output to docIndex for 2nd index creation
-		ofstream output; output.open("query.txt");
+		ofstream output; output.open("query.txt", fstream::app);
 		output << "Query Index contains:\n";
 
 		for(int i = 0; i < query.docCollection.size(); i++){
@@ -560,18 +625,42 @@ public:
 	}
 
 	//testing purposes
-	void print_tfidf(char a, vector<tfidf> v_tfidf){
+	void print_perDoc(){
 		// output to docIndex for 2nd index creation
-		string filename = string(1, a) + "_tfidf.txt";
+		ofstream output; output.open("perDoc.txt", fstream::app);
+
+		output << "\nPosting List contains:\n";
+		for(int i = 0; i < perDoc.terms.size(); i++){
+			term k = perDoc.terms[i];
+			output << k.t << "(" << k.ids.size() << ")" << endl << "\t";
+			for(int j = 0; j < k.postings.size(); j++){
+				output << "(" << k.postings[j].first 	// docID
+					   << ": " << k.postings[j].second	// freq
+					   << ") ";
+			}
+			output << endl;
+		}
+
+		// cout << "   perDoc file created." << endl;
+
+		output.close();
+	}
+
+
+	//testing purposes
+	void print_tfidf(string a, vector<tfidf> v_tfidf){
+		// output to docIndex for 2nd index creation
+		string filename = a + "_tfidf.txt";
 
 		ofstream output; output.open(filename, fstream::app);
-		output << filename << " vector contains:\n";
+		output << "Doc " << q_tfidf[0].docId << " vector contains:\n";
 
 		for(int i = 0; i < v_tfidf.size(); i++){
 			tfidf k = v_tfidf[i];
-			output << k.text << " : " 
-				   << k.docId << " : " 
-				   << k.tf_idf << endl;
+			output << "   " << k.text 
+				   << " : " << k.docId 
+				   << " : " << k.tf_idf 
+				   << endl;
 		}
 		output << endl;
 

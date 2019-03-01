@@ -1,5 +1,3 @@
-# TBA
-
 # PS2
 Extending PS1, stemming is included when creating the inverted index.
 
@@ -15,22 +13,22 @@ make; ./index;
 ## About
 Included in this repo is: 
 1. `porter2_stemmer/` - stemming algorithm library
-2. index.txt - list of index created and number of terms in each document
-3. query.txt - list of query created and number of terms in each query
-4. main.h with index and query_index implementation
-<!-- `main.cpp` prompting user input and `main.h` implementing the VSM  -->
+<!-- 2. index.txt - list of index created and number of terms in each document
+3. query.txt - list of query created and number of terms in each query -->
+2. `results_file.txt` with query execution
+<!-- 4. main.h with index and query_index implementation -->
+3. `main.cpp` prompting user input and `main.h` implementing the VSM and query input
 
 
 ## Assumptions
 - terms like "U.S." are broken into two terms: u, s.
 
-## ISSUES AS OF RIGHT NOW: 
-- 1988 cannot print out relevant docs
-
 
 ## Contributing
 `porter2_stemmer/` algorithm folder and `MakeFile` (modified) taken from [here](https://github.com/smassung/porter2_stemmer)
 
-Sabrina Wong
+Sabrina Wong 
+
 swong040@ucr.edu
+
 861195047
