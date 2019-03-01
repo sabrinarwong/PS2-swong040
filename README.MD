@@ -9,6 +9,10 @@ git clone https://github.com/swong040/PS2-swong040.git;
 cd PS2-swong040;
 make; ./index;
 ```
+To get evaluation of results_file
+```bash
+perl data/trec_eval.pl -q data/qrels.txt results_file.txt >> "metrics.txt"
+```
 
 ## About
 Included in this repo is: 
