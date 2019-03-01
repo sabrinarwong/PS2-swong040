@@ -89,7 +89,6 @@ struct term{
 };
 
 struct collection{
-	string name;
 	vector<termsInDoc> docCollection; 	// all docs with num terms
 	vector<term> terms; 				// all terms in collection
 
@@ -170,6 +169,7 @@ private:
 				break;
 			}
 		}
+		return ind;
 	}
 
 	// stop words from .txt to vector
@@ -266,7 +266,6 @@ private:
 	}
 
 	void createIndex(string filename){
-		index.name = "Index";
 		get_stop_words();
 
 		string inTerms[50];
@@ -348,7 +347,7 @@ private:
 	double get_tf(string text, string docNo, collection coll){
 		int termPos = coll.term_pos(text),
 			docPos = coll.doc_pos(docNo),
-			postPos = coll.terms[docPos].post_pos(docNo);
+			postPos = coll.terms[termPos].post_pos(docNo);
 
 		int freq = coll.terms[termPos].postings[postPos].second,
 			total = coll.docCollection[docPos].second;
@@ -368,7 +367,15 @@ private:
 		}
 		return idf;
 	}
+	
+	double get_tfidf(string text, string docId, collection coll){
+		double tf = get_tf(text, docId, coll);
+		double idf = get_idf(text);
 
+		// cout << text << " " << tf << " " << idf << endl;;
+		return tf * idf;
+	}
+	
 	// gets cosine similarity of between query and docId
 	double get_cosine_similarity(string docId){
 		double q_length = 0, t_length = 0, dot_sum = 0;
@@ -382,12 +389,14 @@ private:
 				t_length += pow(t_tfidf[i].tf_idf, 2);
 
 				int qPos = tfidf_pos(t_tfidf[i].text, q_tfidf);
-				dot_sum += t_tfidf[i].tf_idf * q_tfidf[qPos].tf_idf;
+				if(qPos != -1){
+					dot_sum += t_tfidf[i].tf_idf * q_tfidf[qPos].tf_idf;
+				}
 			}
 		}
 		t_length = sqrt(t_length);
 
-		return (dot_sum / (q_length * t_length));
+		return dot_sum / (q_length * t_length);
 	}
 
 	// fill vector with tfidf of query terms
@@ -399,10 +408,7 @@ private:
 		for(int i = 0; i < query.terms.size(); i++){
 			addToQuery.text = query.terms[i].t;
 			addToQuery.docId = query.docCollection[0].first;
-
-			tf = get_tf(addToQuery.text, addToQuery.docId, query);
-			idf = get_idf(addToQuery.text);
-			addToQuery.tf_idf = tf * idf;
+			addToQuery.tf_idf = get_tfidf(addToQuery.text, addToQuery.docId, query);
 
 			q_tfidf.push_back(addToQuery);
 		}
@@ -423,9 +429,7 @@ private:
 			for(int k = 0; k < index.terms[termPos].postings.size(); k++){
 				addToTerm.docId = index.terms[termPos].postings[k].first;
 				
-				tf = get_tf(addToTerm.text, addToTerm.docId, index);
-				idf = get_idf(addToTerm.text);
-				addToTerm.tf_idf = tf * idf;
+				addToTerm.tf_idf = get_tfidf(addToTerm.text, addToTerm.docId, index);
 
 				t_tfidf.push_back(addToTerm);
 			}
@@ -445,7 +449,7 @@ private:
 			cosSim addToCosSim;
 			addToCosSim.docId = docNo;
 			addToCosSim.cs_val = get_cosine_similarity(docNo);
-			if(addToCosSim.cs_val != 0){
+			if(!isnan(addToCosSim.cs_val)){
 				cosine_similarity.push_back(addToCosSim);
 			}
 			docCount++;
@@ -488,10 +492,9 @@ public:
 		// create query index
 		createQueryIndex(input, queryNo);
 		get_query_tfidf();
-		print_tfidf('q', q_tfidf);
+		// print_tfidf('q', q_tfidf);
 		get_term_tfidf();
-		print_tfidf('t', t_tfidf);
-
+		// print_tfidf('t', t_tfidf);
 		create_cos_sim();
 		generate_results_file(queryNo);
 	}
@@ -567,7 +570,7 @@ public:
 		for(int i = 0; i < v_tfidf.size(); i++){
 			tfidf k = v_tfidf[i];
 			output << k.text << " : " 
-				   << k.docId << " " 
+				   << k.docId << " : " 
 				   << k.tf_idf << endl;
 		}
 		output << endl;

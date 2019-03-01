@@ -8,7 +8,7 @@ int main(){
 	docIndex *index = new docIndex();
 
 	// index->print_index(); // testing purposes
-	cout << "   Index created." << endl << endl;
+	// cout << "   Index created." << endl << endl;
 
 	ifstream inputQuery;
 	string query;
@@ -19,11 +19,12 @@ int main(){
 		return -1;
 	}
 
-	// for(query; getline(inputQuery, query); ){
-		getline(inputQuery,query);	// gets the first line of queries
+	for(query; getline(inputQuery, query); ){
+		// getline(inputQuery,query);	// gets the first line of queries
 		index->queryIndex(query);
-	// }
+	}
 	// index->print_query(); // testing purposes
+	cout << "   Results File created" << endl;
 
 	return 0;
 }
