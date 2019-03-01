@@ -1,0 +1,362 @@
+Queryid (Num):      100
+Total number of documents over all queries
+    Retrieved:       60
+    Relevant:        31
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       54
+Total number of documents over all queries
+    Retrieved:       33
+    Relevant:        51
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       56
+Total number of documents over all queries
+    Retrieved:       51
+    Relevant:       167
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       57
+Total number of documents over all queries
+    Retrieved:       56
+    Relevant:        18
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       58
+Total number of documents over all queries
+    Retrieved:       34
+    Relevant:        70
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       59
+Total number of documents over all queries
+    Retrieved:       59
+    Relevant:       291
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       60
+Total number of documents over all queries
+    Retrieved:       57
+    Relevant:         7
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       61
+Total number of documents over all queries
+    Retrieved:       21
+    Relevant:        24
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       62
+Total number of documents over all queries
+    Retrieved:       52
+    Relevant:       115
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       63
+Total number of documents over all queries
+    Retrieved:       19
+    Relevant:         1
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       64
+Total number of documents over all queries
+    Retrieved:       50
+    Relevant:       123
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       68
+Total number of documents over all queries
+    Retrieved:       62
+    Relevant:        13
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       71
+Total number of documents over all queries
+    Retrieved:       64
+    Relevant:       132
+    Rel_ret:          1
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0025
+Precision:
+  At   10 docs:   0.1000
+  At   30 docs:   0.0333
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0076
+
+
+Queryid (Num):       77
+Total number of documents over all queries
+    Retrieved:       46
+    Relevant:        62
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       80
+Total number of documents over all queries
+    Retrieved:       31
+    Relevant:         5
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       85
+Total number of documents over all queries
+    Retrieved:       61
+    Relevant:       393
+    Rel_ret:          1
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0003
+Precision:
+  At   10 docs:   0.1000
+  At   30 docs:   0.0333
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0025
+
+
+Queryid (Num):       87
+Total number of documents over all queries
+    Retrieved:       54
+    Relevant:        47
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       89
+Total number of documents over all queries
+    Retrieved:       52
+    Relevant:        26
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       91
+Total number of documents over all queries
+    Retrieved:       38
+    Relevant:         1
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       93
+Total number of documents over all queries
+    Retrieved:       48
+    Relevant:        94
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       94
+Total number of documents over all queries
+    Retrieved:       24
+    Relevant:        37
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       95
+Total number of documents over all queries
+    Retrieved:       13
+    Relevant:        20
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       97
+Total number of documents over all queries
+    Retrieved:       33
+    Relevant:        10
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       98
+Total number of documents over all queries
+    Retrieved:       29
+    Relevant:         9
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       99
+Total number of documents over all queries
+    Retrieved:       18
+    Relevant:        85
+    Rel_ret:          0
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0000
+Precision:
+  At   10 docs:   0.0000
+  At   30 docs:   0.0000
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0000
+
+
+Queryid (Num):       25
+Total number of documents over all queries
+    Retrieved:     1065
+    Relevant:      1832
+    Rel_ret:          2
+Average precision (non-interpolated) for all rel docs(averaged over queries)
+                  0.0001
+Precision:
+  At   10 docs:   0.0080
+  At   30 docs:   0.0027
+R-Precision (precision after R (= num_rel for a query) docs retrieved):
+    Exact:        0.0004
